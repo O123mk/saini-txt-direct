@@ -405,7 +405,7 @@ async def txt_handler(bot: Client, m: Message):
     raw_text3 = input3.text
     await input3.delete(True)
     if raw_text3 == '1':
-        CR = '[𝄟⃝‌🐬🇳‌ɪᴋʜɪʟ𝄟⃝🐬](https://t.me/+MdZ2996M2G43MWFl)'
+        CR = 'YOUR FRIEND'
     else:
         CR = raw_text3
 
@@ -518,12 +518,12 @@ async def txt_handler(bot: Client, m: Message):
                 cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
 
             try:
-                cc = f'[——— ✦ {str(count).zfill(3)} ✦ ———]({link0})\n\n**🎞️ Title :** `{name1}`\n**├── Extention :**  {CR} .mkv\n**├── Resolution :** [{res}]\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
-                cc1 = f'[——— ✦ {str(count).zfill(3)} ✦ ———]({link0})\n\n**📁 Title :** `{name1}`\n**├── Extention :**  {CR} .pdf\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
-                cczip = f'[——— ✦ {str(count).zfill(3)} ✦ ———]({link0})\n\n**📁 Title :** `{name1}`\n**├── Extention :**  {CR} .zip\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
-                ccimg = f'[——— ✦ {str(count).zfill(3)} ✦ ———]({link0})\n\n**🖼️ Title :** `{name1}`\n**├── Extention :**  {CR} .jpg\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
-                ccm = f'[——— ✦ {str(count).zfill(3)} ✦ ———]({link0})\n\n**🎵 Title :** `{name1}`\n**├── Extention :**  {CR} .mp3\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
-                cchtml = f'[——— ✦ {str(count).zfill(3)} ✦ ———]({link0})\n\n**🌐 Title :** `{name1}`\n**├── Extention :**  {CR} .html\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
+                cc = f'✦ {str(count).zfill(3)}**🎞️ Title :** `{name1}`.mkv\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
+                cc1 = f'✦ {str(count).zfill(3)}**📁 Title :** `{name1}`.pdf\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
+                cczip = f'✦ {str(count).zfill(3)}**📁 Title :** `{name1}`.zip\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
+                ccimg = f'✦ {str(count).zfill(3)}**🖼️ Title :** `{name1}`.jpg\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
+                ccm = f'✦ {str(count).zfill(3)}**🎵 Title :** `{name1}`.mp3\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
+                cchtml = f'{str(count).zfill(3)}**🌐 Title :** `{name1}`.html\n\n**📚 Course :** {b_name}\n\n**🌟 Extracted By :** {CR}'
 
                 if "drive" in url:
                     try:
