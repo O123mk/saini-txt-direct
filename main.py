@@ -532,7 +532,7 @@ async def txt_handler(bot: Client, m: Message):
     await editable.edit(f"**🔹Send the Video Thumb watermark Name**")
     input5: Message = await bot.listen(editable.chat.id)
     text44 = input5.text
-    await input6.delete(True)
+    await input5.delete(True)
 
     await editable.edit(f"**🔹Send the Video Thumb URL\n🔹Send /d for use default\n\n🔹You can direct upload thumb\n🔹Send **No** for use default**")
     input6 = message = await bot.listen(editable.chat.id)
