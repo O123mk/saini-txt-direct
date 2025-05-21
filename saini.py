@@ -292,11 +292,23 @@ async def download_and_decrypt_video(url, cmd, name, key):
             print(f"Failed to decrypt {video_path}.")  
             return None  
 
-async def send_vid(bot: Client, m: Message,cc,filename,thumb,name,prog):
-    subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 "{filename}.jpg"', shell=True)
-    await prog.delete (True)
+async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
+    
+    watermark_text = text44
+    thumbnail_output = f"{filename}.jpg"
+    
+    ffmpeg_cmd = (
+        f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 -vf '
+        f'"drawtext=text=\'{watermark_text}\':fontcolor=white:fontsize=24:'
+        f'box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)/2:y=(h-text_h)/2" '
+        f'"{thumbnail_output}"'
+    )
+    
+    subprocess.run(ffmpeg_cmd, shell=True)
+    await prog.delete(True)
     reply = await m.reply_text(f"**Generate Thumbnail:**\n{name}")
     try:
+
         if thumb == "/d":
             thumbnail = f"{filename}.jpg"
         else:
