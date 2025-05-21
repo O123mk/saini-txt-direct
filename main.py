@@ -530,8 +530,8 @@ async def txt_handler(bot: Client, m: Message):
     await input4.delete(True)
 
     await editable.edit(f"**🔹Send the Video Thumb watermark Name**")
-    input6 = message = await bot.listen(editable.chat.id)
-    text44 = input6.text
+    input5 = message = await bot.listen(editable.chat.id)
+    text44 = input5.text
     await input6.delete(True)
 
     await editable.edit(f"**🔹Send the Video Thumb URL\n🔹Send /d for use default\n\n🔹You can direct upload thumb\n🔹Send **No** for use default**")
@@ -779,7 +779,7 @@ async def txt_handler(bot: Client, m: Message):
                     filename = res_file  
                     await emoji_message.delete()
                     await prog.delete(True)  
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)  
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog, text44)  
                     count += 1  
                     await asyncio.sleep(1)  
                     continue  
@@ -808,7 +808,7 @@ async def txt_handler(bot: Client, m: Message):
                     filename = res_file
                     await emoji_message.delete()
                     await prog.delete(True)
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog, text44)
                     count += 1
                     await asyncio.sleep(1)
                     continue
@@ -837,7 +837,7 @@ async def txt_handler(bot: Client, m: Message):
                     filename = res_file
                     await emoji_message.delete()
                     await prog.delete(True)
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog, text44)
                     count += 1
                     time.sleep(1)
                 
@@ -1111,7 +1111,7 @@ async def text_handler(bot: Client, m: Message):
                     res_file = await helper.download_and_decrypt_video(url, cmd, name, appxkey)  
                     filename = res_file  
                     await prog.delete(True)  
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)    
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog, text44)    
                     await asyncio.sleep(1)  
                     pass
 
@@ -1123,7 +1123,7 @@ async def text_handler(bot: Client, m: Message):
                     res_file = await helper.decrypt_and_merge_video(mpd, keys_string, path, name, raw_text2)
                     filename = res_file
                     await prog.delete(True)
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog, text44)
                     await asyncio.sleep(1)
                     pass
      
@@ -1135,7 +1135,7 @@ async def text_handler(bot: Client, m: Message):
                     res_file = await helper.download_video(url, cmd, name)
                     filename = res_file
                     await prog.delete(True)
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)
+                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog, text44)
                     time.sleep(1)
 
             except Exception as e:
