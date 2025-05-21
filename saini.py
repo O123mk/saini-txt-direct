@@ -291,34 +291,38 @@ async def download_and_decrypt_video(url, cmd, name, key):
         else:  
             print(f"Failed to decrypt {video_path}.")  
             return None  
+            
 
 async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, text44):
-    
     watermark_text = text44
     thumbnail_output = f"{filename}.jpg"
-    
+
+    # Improved FFmpeg command with error handling and better text placement
     ffmpeg_cmd = (
-        f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 -vf '
-        f'"drawtext=text=\'{watermark_text}\':fontcolor=white:fontsize=24:'
-        f'box=1:boxcolor=black@0.5:boxborderw=5:x=(w-text_w)/2:y=(h-text_h)/2" '
-        f'"{thumbnail_output}"'
+        f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 '
+        f'-vf "drawtext=text=\'{watermark_text}\':fontcolor=white:fontsize=24:'
+        f'fontfile=/path/to/your/font.ttf:x=(w-tw)/2:y=(h-th)/2:shadowx=2:shadowy=2:shadowcolor=black@0.8:box=1:boxcolor=black@0.8:boxborderw=5" '
+        f'-y "{thumbnail_output}"' # -y overwrites existing file without asking
     )
-    
-    subprocess.run(ffmpeg_cmd, shell=True)
+
+    try:
+        process = subprocess.run(ffmpeg_cmd, shell=True, capture_output=True, text=True, check=True)
+        # Check for errors in FFmpeg output
+        if process.returncode != 0:
+            print(f"FFmpeg Error: {process.stderr}")
+            await m.reply_text(f"Error generating thumbnail: {process.stderr}")
+            return
+
+    except subprocess.CalledProcessError as e:
+        await m.reply_text(f"Error generating thumbnail: {e}")
+        return
+    except FileNotFoundError:
+        await m.reply_text("Error: Font file not found.  Make sure `/path/to/your/font.ttf` is correct.")
+        return
+
     await prog.delete(True)
     reply = await m.reply_text(f"**Generate Thumbnail:**\n{name}")
-    try:
 
-        if thumb == "/d":
-            thumbnail = f"{filename}.jpg"
-        else:
-            thumbnail = thumb
-            
-    except Exception as e:
-        await m.reply_text(str(e))
-      
-    dur = int(duration(filename))
-    start_time = time.time()
 
     try:
         await m.reply_video(filename,caption=cc, supports_streaming=True,height=720,width=1280,thumb=thumbnail,duration=dur, progress=progress_bar,progress_args=(reply,start_time))
