@@ -20,6 +20,7 @@ from pathlib import Path
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 from base64 import b64decode
+from PIL import Image, ImageDraw, ImageFont
 
 def duration(filename):
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
@@ -292,7 +293,7 @@ async def download_and_decrypt_video(url, cmd, name, key):
             print(f"Failed to decrypt {video_path}.")  
             return None  
 
-async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
+async def send_viid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
     #subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 "{filename}.jpg"', shell=True)
     subprocess.run(
         f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 -q:v 2 '
@@ -302,6 +303,61 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, cha
         shell=True
     )
     await prog.delete (True)
+    reply1 = await bot.send_message(channel_id, f"**📩 Uploading Video 📩:-**\n<blockquote>**{name}**</blockquote>")
+    reply = await m.reply_text(f"**Generate Thumbnail:**\n<blockquote>**{name}**</blockquote>")
+    try:
+        if thumb == "/d":
+            thumbnail = f"{filename}.jpg"
+        else:
+            thumbnail = thumb
+            
+    except Exception as e:
+        await m.reply_text(str(e))
+      
+    dur = int(duration(filename))
+    start_time = time.time()
+
+    try:
+        await bot.send_video(channel_id, filename, caption=cc, supports_streaming=True, height=720, width=1280, thumb=thumbnail, duration=dur, progress=progress_bar, progress_args=(reply, start_time))
+    except Exception:
+        await bot.send_document(channel_id, filename, caption=cc, progress=progress_bar, progress_args=(reply, start_time))
+    os.remove(filename)
+    await reply.delete(True)
+    await reply1.delete(True)
+    os.remove(f"{filename}.jpg")
+
+async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
+    # Step 1: Generate thumbnail using FFmpeg (without drawtext)
+    subprocess.run(
+        f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 -q:v 2 "{filename}.jpg"',
+        shell=True
+    )
+
+    # Step 2: Add watermark using Pillow
+    image = Image.open(f"{filename}.jpg")
+    draw = ImageDraw.Draw(image, "RGBA")
+    width, height = image.size
+
+    # Load a stylish font (replace with path to a TTF file, e.g., Google Fonts)
+    try:
+        font = ImageFont.truetype("arial.ttf", size=height // 15)  # Font size for Telegram clarity
+    except:
+        font = ImageFont.load_default()  # Fallback to default font
+
+    text = "THUNDER HAXOL"
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width, text_height = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    x = (width - text_width) / 2
+    y = (height - text_height) / 2
+
+    # Draw text: Black color with 80% opacity (alpha = 204/255)
+    draw.text((x, y), text, fill=(0, 0, 0, 204), font=font)
+
+    # Save the modified image
+    image.save(f"{filename}.jpg", quality=95)
+
+    # Step 3: Rest of your original logic
+    await prog.delete(True)
     reply1 = await bot.send_message(channel_id, f"**📩 Uploading Video 📩:-**\n<blockquote>**{name}**</blockquote>")
     reply = await m.reply_text(f"**Generate Thumbnail:**\n<blockquote>**{name}**</blockquote>")
     try:
