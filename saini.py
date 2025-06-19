@@ -296,6 +296,125 @@ async def download_and_decrypt_video(url, cmd, name, key):
             print(f"Failed to decrypt {video_path}.")  
             return None  
 
+
+async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
+    try:
+        # Step 1: Generate thumbnail using FFmpeg
+        logger.info(f"Generating thumbnail for {filename}")
+        result = subprocess.run(
+            f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 -q:v 2 "{filename}.jpg"',
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        logger.info(f"FFmpeg output: {result.stdout}")
+
+        # Verify thumbnail file exists
+        if not os.path.exists(f"{filename}.jpg"):
+            logger.error(f"Thumbnail {filename}.jpg not generated")
+            await m.reply_text(f"Error: Thumbnail {filename}.jpg not generated")
+            return
+
+        # Step 2: Add watermark using Pillow
+        logger.info(f"Adding watermark to {filename}.jpg")
+        try:
+            # Open image in RGBA mode for transparency
+            image = Image.open(f"{filename}.jpg").convert("RGBA")
+            draw = ImageDraw.Draw(image)
+            width, height = image.size
+
+            # Load a font (try system font or fallback to default)
+            try:
+                # Use a bold system font or downloaded TTF (e.g., from Google Fonts)
+                font = ImageFont.truetype("arial.ttf", size=height // 12)  # Larger font for visibility
+                logger.info("Using arial.ttf font")
+            except:
+                font = ImageFont.load_default(size=height // 12)
+                logger.warning("Falling back to default font")
+
+            text = "THUNDER HAXOL"
+            # Get text bounding box for centering
+            bbox = draw.textbbox((0, 0), text, font=font)
+            text_width, text_height = bbox[2] - bbox[0], bbox[3] - bbox[1]
+            x = (width - text_width) / 2
+            y = (height - text_height) / 2
+
+            # Add shadow for better visibility
+            draw.text((x + 5, y + 5), text, fill=(50, 50, 50, 180), font=font)
+            # Draw main text: Black color with 80% opacity
+            draw.text((x, y), text, fill=(0, 0, 0, 204), font=font)
+
+            # Save the modified image as JPEG
+            image.convert("RGB").save(f"{filename}.jpg", quality=95)
+            logger.info(f"Watermarked thumbnail saved as {filename}.jpg")
+
+        except Exception as e:
+            logger.error(f"Watermarking failed: {str(e)}")
+            await m.reply_text(f"Watermarking failed: {str(e)}")
+            return
+
+        # Step 3: Original logic for thumbnail selection and upload
+        await prog.delete(True)
+        reply1 = await bot.send_message(channel_id, f"**📩 Uploading Video 📩:-**\n<blockquote>**{name}**</blockquote>")
+        reply = await m.reply_text(f"**Generate Thumbnail:**\n<blockquote>**{name}**</blockquote>")
+
+        # Log thumb value for debugging
+        logger.info(f"Thumb value: {thumb}")
+        try:
+            if thumb == "/d":
+                thumbnail = f"{filename}.jpg"
+                logger.info(f"Using generated thumbnail: {thumbnail}")
+            else:
+                thumbnail = thumb
+                logger.info(f"Using custom thumbnail: {thumbnail}")
+
+        except Exception as e:
+            logger.error(f"Thumbnail selection error: {str(e)}")
+            await m.reply_text(str(e))
+            return
+
+        dur = int(duration(filename))  # Assuming duration() is defined elsewhere
+        start_time = time.time()
+
+        try:
+            await bot.send_video(
+                channel_id,
+                filename,
+                caption=cc,
+                supports_streaming=True,
+                height=720,
+                width=1280,
+                thumb=thumbnail,
+                duration=dur,
+                progress=progress_bar,  # Assuming progress_bar is defined
+                progress_args=(reply, start_time)
+            )
+            logger.info("Video uploaded successfully")
+        except Exception as e:
+            logger.warning(f"Video upload failed, trying document: {str(e)}")
+            await bot.send_document(
+                channel_id,
+                filename,
+                caption=cc,
+                progress=progress_bar,
+                progress_args=(reply, start_time)
+            )
+            logger.info("Document uploaded successfully")
+
+        # Cleanup
+        os.remove(filename)
+        await reply.delete(True)
+        await reply1.delete(True)
+        if os.path.exists(f"{filename}.jpg"):
+            os.remove(f"{filename}.jpg")
+            logger.info(f"Removed thumbnail: {filename}.jpg")
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
+        await m.reply_text(f"Error: {str(e)}")
+        
+
 async def send_viid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
     #subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 "{filename}.jpg"', shell=True)
     subprocess.run(
@@ -329,7 +448,7 @@ async def send_viid(bot: Client, m: Message, cc, filename, thumb, name, prog, ch
     await reply1.delete(True)
     os.remove(f"{filename}.jpg")
 
-async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
+async def send_vvid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
     try:
         # Step 1: Generate thumbnail using FFmpeg
         logger.info(f"Generating thumbnail for {filename}")
