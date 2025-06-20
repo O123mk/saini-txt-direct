@@ -21,8 +21,20 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 from base64 import b64decode
 from PIL import Image, ImageDraw, ImageFont
+import logging
 
-logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.INFO)
+#logger = logging.getLogger(__name__)
+
+# Setup logging to console and file
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),  # Console output
+        logging.FileHandler('bot.log')  # Save logs to bot.log
+    ]
+)
 logger = logging.getLogger(__name__)
 
 def duration(filename):
