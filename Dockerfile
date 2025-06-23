@@ -16,7 +16,11 @@ RUN apk add --no-cache \
     aria2 \
     make \
     g++ \
-    cmake && \
+    cmake \
+    imagemagick \
+    fontconfig \
+    ttf-dejavu \
+    wget && \
     wget -q https://github.com/axiomatic-systems/Bento4/archive/v1.6.0-639.zip && \
     unzip v1.6.0-639.zip && \
     cd Bento4-1.6.0-639 && \
@@ -27,6 +31,10 @@ RUN apk add --no-cache \
     cp mp4decrypt /usr/local/bin/ &&\
     cd ../.. && \
     rm -rf Bento4-1.6.0-639 v1.6.0-639.zip
+    # Download Bebas Neue font (optional)
+    wget -q https://github.com/googlefonts/bebasneue/raw/main/fonts/ttf/BebasNeue-Regular.ttf -O /usr/share/fonts/truetype/BebasNeue-Regular.ttf && \
+    fc-cache -f -v
+    
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip \
