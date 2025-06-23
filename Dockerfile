@@ -7,9 +7,8 @@ WORKDIR /app
 # Copy all files from the current directory to the container's /app directory
 COPY . .
 
-# Add edge/community repository for imagemagick-dev
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
+# Add community repository for imagemagick and imagemagick-dev
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.14/community" >> /etc/apk/repositories && \
     apk update
 
 # Install necessary dependencies
@@ -27,7 +26,7 @@ RUN apk add --no-cache \
     wget \
     unzip
 
-# Install imagemagick and imagemagick-dev separately to avoid conflicts
+# Install imagemagick and imagemagick-dev
 RUN apk add --no-cache imagemagick imagemagick-dev
 
 # Install Bento4
