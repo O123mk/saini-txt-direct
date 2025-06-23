@@ -1,14 +1,13 @@
-#🇳‌🇮‌🇰‌🇭‌🇮‌🇱‌
 # Add your details here and then deploy by clicking on HEROKU Deploy button
 import os
 from os import environ
 
-API_ID = int(environ.get("API_ID", "xxxxxxxxx"))
-API_HASH = environ.get("API_HASH", "xxxxxxxxxxxxxxxxxxxxxxx")
+API_ID = int(environ.get("API_ID", "22581733"))
+API_HASH = environ.get("API_HASH", "1db7bdcf908100cc641c6a5276765c3d")
 BOT_TOKEN = environ.get("BOT_TOKEN", "")
-OWNER = int(environ.get("OWNER", "5680454765"))
-CREDIT = "𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎"
-AUTH_USER = os.environ.get('AUTH_USERS', '5680454765').split(',')
+OWNER = int(environ.get("OWNER", "6935604936"))
+CREDIT = "XOXOX"
+AUTH_USER = os.environ.get('AUTH_USERS', '6935604936').split(',')
 AUTH_USERS = [int(user_id) for user_id in AUTH_USER]
 if int(OWNER) not in AUTH_USERS:
     AUTH_USERS.append(int(OWNER))
