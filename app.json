@@ -7,18 +7,18 @@
         "video-extract",
         "pyrogram"
     ],
-    "repository": "https://github.com/nikhilsainiop/saini-txt-direct",
-    "success_url": "https://t.me/saini_contact_bot",
+    "repository": "https://github.com/O123mk/saini-txt-direct",
+    "success_url": "https://t.me/bot",
     "stack": "container",
     "env": {
         "API_ID": {
             "description": "𝑬𝒏𝒕𝒆𝒓 𝒀𝒐𝒖𝒓 𝑨𝒑𝒊 𝑰𝑫",
-            "value": "",
+            "value": "22581733",
             "required": true
         },
         "API_HASH": {
             "description": "𝑬𝒏𝒕𝒆𝒓 𝒀𝒐𝒖𝒓 𝑨𝒑𝒊 𝑯𝒂𝒔𝒉",
-            "value": "",
+            "value": "1db7bdcf908100cc641c6a5276765c3d",
             "required": true
         },
         "BOT_TOKEN": {
@@ -28,12 +28,12 @@
         },
         "OWNER": {
             "description": "𝙀𝙣𝙩𝙚𝙧 𝙔𝙤𝙪𝙧 𝙏𝙚𝙡𝙚𝙜𝙧𝙖𝙢 𝙄𝘿",
-            "value": "5680454765",
+            "value": "6935604936",
             "required": true
         },
         "CREDIT": {
             "description": "𝙀𝙣𝙩𝙚𝙧 𝘾𝙧𝙚𝙙𝙞𝙩 𝙉𝙖𝙢𝙚 𝙞𝙣 𝙖𝙡𝙢𝙤𝙨𝙩 6-8 𝙡𝙚𝙩𝙩𝙚𝙧𝙨",
-            "value": "𝙎𝘼𝙄𝙉𝙄 𝘽𝙊𝙏𝙎",
+            "value": "XOXOX",
             "required": true
         }
     },
