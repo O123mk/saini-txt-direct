@@ -20,6 +20,9 @@ from pathlib import Path
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 from base64 import b64decode
+from wand.image import Image
+from wand.drawing import Drawing
+from wand.color import Color
 
 def duration(filename):
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
@@ -292,7 +295,7 @@ async def download_and_decrypt_video(url, cmd, name, key):
             print(f"Failed to decrypt {video_path}.")  
             return None  
 
-async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
+async def senod_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
     subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 "{filename}.jpg"', shell=True)
     await prog.delete (True)
     reply1 = await bot.send_message(channel_id, f"**📩 Uploading Video 📩:-**\n<blockquote>**{name}**</blockquote>")
@@ -317,3 +320,80 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, cha
     await reply.delete(True)
     await reply1.delete(True)
     os.remove(f"{filename}.jpg")
+
+async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog, channel_id):
+    # Generate thumbnail using FFmpeg
+    thumbnail_path = f"{filename}.jpg"
+    subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:10 -vframes 1 "{thumbnail_path}"', shell=True)
+    
+    # Watermark function
+    def add_watermark(input_path, output_path):
+        try:
+            with Image(filename=input_path) as img:
+                with Drawing() as draw:
+                    # Font setup
+                    font_size = 120
+                    font_paths = [
+                        "BebasNeue-Regular.ttf",
+                        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+                        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+                    ]
+                    for font_path in font_paths:
+                        if os.path.exists(font_path):
+                            draw.font = font_path
+                            break
+                    else:
+                        draw.font = "DejaVu-Sans"  # System font fallback
+                    
+                    draw.font_size = font_size
+                    draw.fill_color = Color('rgba(0, 0, 0, 0.5)')  # 50% opacity
+                    draw.stroke_color = Color('black')  # Stroke for bold effect
+                    draw.stroke_width = 2  # Thicker stroke
+
+                    # Text aur position
+                    text = "THUNDER"
+                    metrics = draw.get_font_metrics(img, text)
+                    x = (img.width - metrics.text_width) / 2
+                    y = (img.height - metrics.text_height) / 2 + metrics.ascender
+                    draw.text(int(x), int(y), text)
+                    draw(img)
+                img.save(filename=output_path)
+                return True
+        except:
+            return False
+
+    # Original logic
+    await prog.delete(True)
+    reply1 = await bot.send_message(channel_id, f"**📩 Uploading Video 📩:-**\n<blockquote>**{name}**</blockquote>")
+    reply = await m.reply_text(f"**Generate Thumbnail:**\n<blockquote>**{name}**</blockquote>")
+
+    try:
+        if thumb == "/dd":
+            watermarked_thumbnail = f"{filename}_watermarked.jpg"
+            if add_watermark(thumbnail_path, watermarked_thumbnail):
+                thumbnail = watermarked_thumbnail
+            else:
+                thumbnail = thumbnail_path  # Fallback
+        elif thumb == "/d":
+            thumbnail = thumbnail_path
+        else:
+            thumbnail = thumb
+    except Exception as e:
+        await m.reply_text(str(e))
+        return
+
+    dur = int(duration(filename))
+    start_time = time.time()
+
+    try:
+        await bot.send_video(channel_id, filename, caption=cc, supports_streaming=True, height=720, width=1280, thumb=thumbnail, duration=dur, progress=progress_bar, progress_args=(reply, start_time))
+    except:
+        await bot.send_document(channel_id, filename, caption=cc, progress=progress_bar, progress_args=(reply, start_time))
+
+    os.remove(filename)
+    await reply.delete(True)
+    await reply1.delete(True)
+    if os.path.exists(thumbnail_path):
+        os.remove(thumbnail_path)
+    if thumb == "/dd" and os.path.exists(watermarked_thumbnail):
+        os.remove(watermarked_thumbnail)
