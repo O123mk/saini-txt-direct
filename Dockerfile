@@ -31,10 +31,6 @@ RUN apk add --no-cache \
     cp mp4decrypt /usr/local/bin/ &&\
     cd ../.. && \
     rm -rf Bento4-1.6.0-639 v1.6.0-639.zip
-    # Download Bebas Neue font (optional)
-    wget -q https://github.com/googlefonts/bebasneue/raw/main/fonts/ttf/BebasNeue-Regular.ttf -O /usr/share/fonts/truetype/BebasNeue-Regular.ttf && \
-    fc-cache -f -v
-    
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip \
