@@ -41,10 +41,6 @@ RUN wget -q https://github.com/axiomatic-systems/Bento4/archive/v1.6.0-639.zip &
     cd ../.. && \
     rm -rf Bento4-1.6.0-639 v1.6.0-639.zip
 
-# Download Bebas Neue font (optional)
-RUN wget -q -O /usr/share/fonts/truetype/BebasNeue-Regular.ttf https://github.com/googlefonts/bebasneue/raw/main/fonts/ttf/BebasNeue-Regular.ttf && \
-    fc-cache -f
-
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip && \
     pip3 install --no-cache-dir -r sainibots.txt && \
