@@ -7,6 +7,11 @@ WORKDIR /app
 # Copy all files from the current directory to the container's /app directory
 COPY . .
 
+# Add edge/community repository for imagemagick-dev
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
+    apk update
+
 # Install necessary dependencies
 RUN apk add --no-cache \
     gcc \
@@ -17,13 +22,16 @@ RUN apk add --no-cache \
     make \
     g++ \
     cmake \
-    imagemagick \
-    imagemagick-dev \
     fontconfig \
     ttf-dejavu \
     wget \
-    unzip && \
-    wget -q https://github.com/axiomatic-systems/Bento4/archive/v1.6.0-639.zip && \
+    unzip
+
+# Install imagemagick and imagemagick-dev separately to avoid conflicts
+RUN apk add --no-cache imagemagick imagemagick-dev
+
+# Install Bento4
+RUN wget -q https://github.com/axiomatic-systems/Bento4/archive/v1.6.0-639.zip && \
     unzip v1.6.0-639.zip && \
     cd Bento4-1.6.0-639 && \
     mkdir build && \
@@ -32,15 +40,16 @@ RUN apk add --no-cache \
     make -j$(nproc) && \
     cp mp4decrypt /usr/local/bin/ && \
     cd ../.. && \
-    rm -rf Bento4-1.6.0-639 v1.6.0-639.zip && \
-    # Download Bebas Neue font (optional)
-    wget -q -O /usr/share/fonts/truetype/BebasNeue-Regular.ttf https://github.com/googlefonts/bebasneue/raw/main/fonts/ttf/BebasNeue-Regular.ttf && \
+    rm -rf Bento4-1.6.0-639 v1.6.0-639.zip
+
+# Download Bebas Neue font (optional)
+RUN wget -q -O /usr/share/fonts/truetype/BebasNeue-Regular.ttf https://github.com/googlefonts/bebasneue/raw/main/fonts/ttf/BebasNeue-Regular.ttf && \
     fc-cache -f
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir --upgrade pip \
-    && pip3 install --no-cache-dir --upgrade -r sainibots.txt \
-    && python3 -m pip install -U yt-dlp
+RUN pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install --no-cache-dir -r sainibots.txt && \
+    python3 -m pip install -U yt-dlp
 
 # Set the command to run the application
 CMD ["sh", "-c", "gunicorn app:app & python3 main.py"]
