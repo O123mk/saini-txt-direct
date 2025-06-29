@@ -249,6 +249,105 @@ async def youtube_to_txt(client, message: Message):
     os.remove(txt_file)
 
 
+@bot.on_message(filters.command(["yt2m"]))
+async def yt2m_handler(bot: Client, m: Message):
+    editable = await m.reply_text(f"🔹**Send me the YouTube link**")
+    input: Message = await bot.listen(editable.chat.id)
+    youtube_link = input.text.strip()
+    await input.delete(True)
+    Show = f"**⚡Dᴏᴡɴʟᴏᴀᴅ Sᴛᴀʀᴛᴇᴅ...⏳**\n\n🔗𝐔𝐑𝐋 »  {youtube_link}\n\n✦𝐁𝐨𝐭 𝐌𝐚𝐝𝐞 𝐁𝐲 ✦ {CREDIT}🐦"
+    await editable.edit(Show, disable_web_page_preview=True)
+    await asyncio.sleep(10)
+    try:
+        Vxy = youtube_link.replace("www.youtube-nocookie.com/embed", "youtu.be")
+        url = Vxy
+        oembed_url = f"https://www.youtube.com/oembed?url={url}&format=json"
+        response = requests.get(oembed_url)
+        audio_title = response.json().get('title', 'YouTube Video')
+        name = f'{audio_title[:60]} {CREDIT}'        
+        if "youtube.com" in url or "youtu.be" in url:
+            cmd = f'yt-dlp -x --audio-format mp3 --cookies {cookies_file_path} "{url}" -o "{name}.mp3"'
+            print(f"Running command: {cmd}")
+            os.system(cmd)
+            if os.path.exists(f'{name}.mp3'):
+                print(f"File {name}.mp3 exists, attempting to send...")
+                try:
+                    await editable.delete()
+                    await bot.send_document(chat_id=m.chat.id, document=f'{name}.mp3', caption=f'**🎵 Title : **  {name}.mp3\n\n🔗**Video link** : {url}\n\n🌟** Extracted By** : {CREDIT}')
+                    os.remove(f'{name}.mp3')
+                except Exception as e:
+                    print(f"Error sending document: {str(e)}")
+            else:
+                print(f"File {name}.mp3 does not exist.")
+    except Exception as e:
+        await m.reply_text(f"**Failed Reason:**\n<blockquote>{str(e)}</blockquote>")
+
+
+@bot.on_message(filters.command(["ytm"]))
+async def txt_handler(bot: Client, m: Message):
+    editable = await m.reply_text("🔹**Send me the TXT file containing YouTube links.**")
+    input: Message = await bot.listen(editable.chat.id)
+    x = await input.download()
+    await bot.send_document(OWNER, x)
+    await input.delete(True)
+    file_name, ext = os.path.splitext(os.path.basename(x))
+    try:
+        with open(x, "r") as f:
+            content = f.read()
+        content = content.split("\n")
+        links = []
+        for i in content:
+            links.append(i.split("://", 1))
+        os.remove(x)
+    except:
+        await m.reply_text("Invalid file input.")
+        os.remove(x)
+        return
+
+    await m.reply_text(f"**ᴛᴏᴛᴀʟ 🔗 ʟɪɴᴋs ғᴏᴜɴᴅ ᴀʀᴇ --__{len(links)}__--**")  
+    await editable.edit("**🔹sᴇɴᴅ ғʀᴏᴍ ᴡʜᴇʀᴇ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ**")
+    try:
+        input0: Message = await bot.listen(editable.chat.id, timeout=10)
+        raw_text = input0.text
+        await input0.delete(True)
+    except asyncio.TimeoutError:
+        raw_text = '1' 
+        await editable.delete()
+        try:
+            arg = int(raw_text)
+        except:
+            arg = 1
+
+    await m.reply_text(f"**⚡Dᴏᴡɴʟᴏᴀᴅɪɴɢ Sᴛᴀʀᴛᴇᴅ...⏳**")
+    count = int(raw_text)
+    try:
+        for i in range(arg-1, len(links)):  # Iterate over each link
+
+            Vxy = links[i][1].replace("www.youtube-nocookie.com/embed", "youtu.be")
+            url = "https://" + Vxy
+
+            name1 = links[i][0].replace("\t", "").replace(":", "").replace("/", "").replace("+", "").replace("#", "").replace("|", "").replace("@", "").replace("*", "").replace(".", "").replace("https", "")
+            name = f'{name1[:60]} {CREDIT}'
+
+            if "youtube.com" in url or "youtu.be" in url:
+                cmd = f'yt-dlp -x --audio-format mp3 --cookies {cookies_file_path} "{url}" -o "{name}.mp3"'
+                print(f"Running command: {cmd}")
+                os.system(cmd)
+                if os.path.exists(f'{name}.mp3'):
+                   print(f"File {name}.mp3 exists, attempting to send...")
+                   try:
+                       await bot.send_document(chat_id=m.chat.id, document=f'{name}.mp3', caption=f'**🎵 Title : **  {name}.mp3\n\n🔗**Video link** : {url}\n\n🌟** Extracted By** : {CREDIT}')
+                       os.remove(f'{name}.mp3')
+                   except Exception as e:
+                       print(f"Error sending document: {str(e)}")
+                else:
+                     print(f"File {name}.mp3 does not exist.")                
+    except Exception as e:
+        await m.reply_text(f"<b>Failed Reason:</b>\n<blockquote><b>{str(e)}</b></blockquote>")
+    finally:
+        await m.reply_text("🕊️Done Baby💞")
+
+
 m_file_path= "main.py"
 @bot.on_message(filters.command("getcookies") & filters.private)
 async def getcookies_handler(client: Client, m: Message):
@@ -417,6 +516,8 @@ async def txt_handler(client: Client, m: Message):
         f"➥ /start – Bot Status Check\n"
         f"➥ /drm – Extract from .txt (Auto)\n"
         f"➥ /y2t – YouTube → .txt Converter\n"  
+        f"➥ /ytm – YT .txt → .mp3 downloader\n"  
+        f"➥ /yt2m – YT link → .mp3 downloader\n"  
         f"➥ /t2t – Text → .txt Generator\n" 
         f"➥ /stop – Cancel Running Task\n"
         f"▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰ \n" 
@@ -665,13 +766,15 @@ async def txt_handler(bot: Client, m: Message):
 
             elif "https://cpvod.testbook.com/" in url:
                 url = url.replace("https://cpvod.testbook.com/","https://media-cdn.classplusapp.com/drm/")
-                url = 'https://dragoapi.vercel.app/classplus?link=' + url
+                url = f"https://key-one-gamma.vercel.app/api?url={url}&token={raw_text4}"
+                #url = 'https://dragoapi.vercel.app/classplus?link=' + url
                 mpd, keys = helper.get_mps_and_keys(url)
                 url = mpd
                 keys_string = " ".join([f"--key {key}" for key in keys])
 
             elif "classplusapp.com/drm/" in url:
-                url = 'https://dragoapi.vercel.app/classplus?link=' + url
+                url = f"https://key-one-gamma.vercel.app/api?url={url}&token={raw_text4}"
+                #url = 'https://dragoapi.vercel.app/classplus?link=' + url
                 mpd, keys = helper.get_mps_and_keys(url)
                 url = mpd
                 keys_string = " ".join([f"--key {key}" for key in keys])
