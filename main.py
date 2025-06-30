@@ -828,12 +828,12 @@ async def txt_handler(bot: Client, m: Message):
                 cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.mp4"'
 
             try:
-                cc = f'[🎥]Vid Id : {str(count).zfill(3)}**Video Title :** `{name1} [{res}p] .mkv`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
-                cc1 = f'[📕]Pdf Id : {str(count).zfill(3)}**File Title :** `{name1} .pdf`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
-                cczip = f'[📁]Zip Id : {str(count).zfill(3)}**Zip Title :** `{name1} .zip`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n' 
-                ccimg = f'[🖼️]Img Id : {str(count).zfill(3)}**Img Title :** `{name1} .jpg`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
-                ccm = f'[🎵]Audio Id : {str(count).zfill(3)}**Audio Title :** `{name1} .mp3`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
-                cchtml = f'[🌐]Html Id : {str(count).zfill(3)}**Html Title :** `{name1} .html`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
+                cc = f'{str(count).zfill(3)} : **Video Title :** `{name1} .mkv`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
+                cc1 = f'{str(count).zfill(3)} : **File Title :** `{name1} .pdf`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
+                cczip = f'{str(count).zfill(3)} : **Zip Title :** `{name1} .zip`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n' 
+                ccimg = f'{str(count).zfill(3)} : **Img Title :** `{name1} .jpg`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
+                ccm = f'{str(count).zfill(3)} : **Audio Title :** `{name1} .mp3`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
+                cchtml = f'{str(count).zfill(3)} : **Html Title :** `{name1} .html`\n<blockquote><b>Batch Name :</b> {b_name}</blockquote>\n\n**Extracted by ➤** {CR}\n'
                   
                 if "drive" in url:
                     try:
